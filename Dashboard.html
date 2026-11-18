@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;800&family=Fredoka:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --banner-yellow: #ffd014;
+      --banner-magenta: #ff0055;
+      --banner-green: #69d84f;
+      --banner-purple: #b37cd9;
+      --banner-orange: #f97321;
+      --banner-cyan: #18b5d9;
+      --crimson-crest: #8b0000;
+
+      --background: #fbf6f3;
+      --surface: #ffffff;
+      --surface-alt: #fcf9f7;
+      --text: #1e292b;
+      --muted: #68767a;
+      --border: #e6dfdc;
+      --radius-lg: 24px;
+      --radius-md: 12px;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--background);
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(255, 208, 20, 0.12) 0%, transparent 25%),
+        radial-gradient(circle at 90% 10%, rgba(179, 124, 217, 0.12) 0%, transparent 25%);
+      color: var(--text);
+    }
+
+    .dashboard-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(30, 41, 43, 0.05);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-title-area h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 28px;
+      color: var(--banner-orange);
+      margin: 0 0 4px;
+      letter-spacing: 1px;
+    }
+
+    .header-title-area p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .date-badge {
+      background: rgba(24, 181, 217, 0.1);
+      color: #0e85a0;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 999px;
+    }
+
+    .action-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .action-btn:active {
+      background: var(--border);
+    }
+
+    /* STATS SUMMARY BAR */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(30, 41, 43, 0.03);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .stat-in .stat-value { color: #1f8b4c; }
+    .stat-out .stat-value { color: var(--banner-orange); }
+
+    /* SECTIONS */
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(30, 41, 43, 0.05);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 0 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title.in::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1f8b4c;
+    }
+
+    .section-title.out::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--banner-orange);
+    }
+
+    .section-title.classes::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--banner-purple);
+    }
+
+    /* CLASSES GRID */
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .class-card {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .class-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px dashed var(--border);
+    }
+
+    .class-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .class-badge {
+      background: rgba(179, 124, 217, 0.15);
+      color: #7b43a8;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .class-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .class-student-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .student-info .s-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .student-info .s-details {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .student-age-pill {
+      background: rgba(24, 181, 217, 0.1);
+      color: #0e85a0;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .class-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-style: italic;
+      padding: 20px 0;
+    }
+
+    /* TABLES */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: var(--surface-alt);
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .child-name-cell {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .phone-badge {
+      display: inline-block;
+      background: rgba(249, 115, 33, 0.08);
+      color: #b34a05;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .empty-row {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      .header {
+        padding: 20px;
+      }
+      .section-card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title-area">
+      <h1>Kid's Kingdom Dashboard</h1>
+      <p>Pretoria International Christian Church</p>
+    </div>
+    <div class="header-actions">
+      <div id="dateBadge" class="date-badge">Loading date...</div>
+      <button type="button" class="action-btn" onclick="loadDashboardData()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-card stat-in">
+      <div class="stat-label">Currently Checked In</div>
+      <div id="countIn" class="stat-value">0</div>
+    </div>
+    <div class="stat-card stat-out">
+      <div class="stat-label">Already Checked Out</div>
+      <div id="countOut" class="stat-value">0</div>
+    </div>
+  </div>
+
+  <!-- CLASSROOM BREAKDOWN SECTION -->
+  <div class="section-card">
+    <div class="section-title classes">Classroom Breakdown (Checked In Today)</div>
+    <div id="classesGrid" class="classes-grid">
+      <!-- Dynamically populated by JS -->
+    </div>
+  </div>
+
+  <!-- CURRENTLY IN TABLE -->
+  <div class="section-card">
+    <div class="section-title in">Children Currently in Class (Master List)</div>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Child Name</th>
+            <th>Age</th>
+            <th>Parent / Guardian</th>
+            <th>Contact Number</th>
+            <th>Sign-In Time</th>
+          </tr>
+        </thead>
+        <tbody id="currentlyInTable">
+          <tr><td colspan="5" class="empty-row">Loading attendance records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CHECKED OUT TABLE -->
+  <div class="section-card">
+    <div class="section-title out">Children Signed Out Today</div>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Child Name</th>
+            <th>Age</th>
+            <th>Parent / Guardian</th>
+            <th>Sign-In Time</th>
+            <th>Sign-Out Time</th>
+          </tr>
+        </thead>
+        <tbody id="checkedOutTable">
+          <tr><td colspan="5" class="empty-row">No check-outs recorded yet today.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ==========================================
+  // EDIT CLASS NAMES & AGE RANGES EASILY HERE
+  // ==========================================
+  const CLASSES_CONFIG = [
+    { name: "Infants", minAge: 0, maxAge: 3 },
+    { name: "Toddlers", minAge: 4, maxAge: 6 },
+    { name: "Children", minAge: 7, maxAge: 9 }
+  ];
+
+  function loadDashboardData() {
+    google.script.run
+      .withSuccessHandler(function(data) {
+        renderDashboard(data);
+      })
+      .withFailureHandler(function(error) {
+        alert("Failed to load dashboard data: " + (error.message || "Unknown error"));
+      })
+      .getDashboardData();
+  }
+
+  function renderDashboard(data) {
+    document.getElementById("dateBadge").textContent = data.date;
+
+    document.getElementById("countIn").textContent = data.currentlyIn.length;
+    document.getElementById("countOut").textContent = data.checkedOut.length;
+
+    // Render Classroom Breakdown Cards
+    renderClassrooms(data.currentlyIn);
+
+    // Render Currently In Table
+    const inTable = document.getElementById("currentlyInTable");
+    inTable.innerHTML = "";
+
+    if (data.currentlyIn.length === 0) {
+      inTable.innerHTML = '<tr><td colspan="5" class="empty-row">No children are currently checked in.</td></tr>';
+    } else {
+      data.currentlyIn.forEach(function(item) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="child-name-cell">${escapeHtml(item.childName)}</td>
+          <td>${escapeHtml(String(item.childAge))}</td>
+          <td>${escapeHtml(item.parentName)}</td>
+          <td><span class="phone-badge">${escapeHtml(item.parentPhone)}</span></td>
+          <td>${escapeHtml(item.signInTime)}</td>
+        `;
+        inTable.appendChild(tr);
+      });
+    }
+
+    // Render Checked Out Table
+    const outTable = document.getElementById("checkedOutTable");
+    outTable.innerHTML = "";
+
+    if (data.checkedOut.length === 0) {
+      outTable.innerHTML = '<tr><td colspan="5" class="empty-row">No children have been signed out yet today.</td></tr>';
+    } else {
+      data.checkedOut.forEach(function(item) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="child-name-cell">${escapeHtml(item.childName)}</td>
+          <td>${escapeHtml(String(item.childAge))}</td>
+          <td>${escapeHtml(item.parentName)}</td>
+          <td>${escapeHtml(item.signInTime)}</td>
+          <td>${escapeHtml(item.signOutTime)}</td>
+        `;
+        outTable.appendChild(tr);
+      });
+    }
+  }
+
+  function renderClassrooms(currentlyIn) {
+    const grid = document.getElementById("classesGrid");
+    grid.innerHTML = "";
+
+    CLASSES_CONFIG.forEach(function(cls) {
+      // Filter children whose age falls into this class's range
+      const studentsInClass = currentlyIn.filter(function(student) {
+        const age = Number(student.childAge);
+        return !isNaN(age) && age >= cls.minAge && age <= cls.maxAge;
+      });
+
+      const card = document.createElement("div");
+      card.className = "class-card";
+
+      let studentsHtml = "";
+      if (studentsInClass.length === 0) {
+        studentsHtml = '<div class="class-empty">No children currently in this class.</div>';
+      } else {
+        studentsHtml = '<ul class="class-list">';
+        studentsInClass.forEach(function(s) {
+          studentsHtml += `
+            <li class="class-student-item">
+              <div class="student-info">
+                <div class="s-name">${escapeHtml(s.childName)}</div>
+                <div class="s-details">Parent: ${escapeHtml(s.parentName)}</div>
+              </div>
+              <div class="student-age-pill">Age ${escapeHtml(String(s.childAge))}</div>
+            </li>
+          `;
+        });
+        studentsHtml += '</ul>';
+      }
+
+      card.innerHTML = `
+        <div class="class-header">
+          <span class="class-name">${escapeHtml(cls.name)}</span>
+          <span class="class-badge">${cls.minAge}-${cls.maxAge} yrs (${studentsInClass.length})</span>
+        </div>
+        ${studentsHtml}
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/#/g, "&#039;");
+  }
+
+  // Load on page open and auto-refresh every 30 seconds
+  loadDashboardData();
+  setInterval(loadDashboardData, 30000);
+</script>
+
+</body>
+</html>
