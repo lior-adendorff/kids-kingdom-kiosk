@@ -14,7 +14,6 @@
     }
 
     :root {
-      /* Banner Palette */
       --banner-yellow: #ffd014;
       --banner-magenta: #ff0055;
       --banner-green: #69d84f;
@@ -24,7 +23,6 @@
       --banner-coral: #f27474;
       --crimson-crest: #8b0000;
 
-      /* UI Theme */
       --background: #fbf6f3;
       --surface: #ffffff;
       --surface-alt: #fcf9f7;
@@ -65,7 +63,6 @@
       border: 1px solid rgba(230, 223, 220, 0.8);
     }
 
-    /* BANNER COLOR BLOBS AT TOP & BOTTOM */
     .banner-blobs-top {
       position: absolute;
       top: 0;
@@ -105,7 +102,7 @@
       border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%;
     }
 
-    /* HEADER (RECREATING BANNER TYPOGRAPHY) */
+    /* HEADER */
     .header {
       position: relative;
       z-index: 1;
@@ -130,15 +127,12 @@
       line-height: 1.05;
       margin: 0;
       display: inline-block;
-      /* Thick yellow sticker outline like the banner */
       filter: drop-shadow(0px 2px 0px var(--banner-yellow));
       -webkit-text-stroke: 6px var(--banner-yellow);
       paint-order: stroke fill;
     }
 
-    .welcome-banner span {
-      display: inline-block;
-    }
+    .welcome-banner span { display: inline-block; }
     .welcome-banner .w { color: var(--banner-cyan); transform: rotate(-4deg); }
     .welcome-banner .e1 { color: var(--banner-purple); transform: rotate(2deg); }
     .welcome-banner .l { color: var(--banner-coral); transform: rotate(-2deg); }
@@ -225,7 +219,7 @@
       margin-top: 4px;
     }
 
-    /* PROFESSIONAL FORM SECTIONS */
+    /* FORM SECTIONS */
     #attendanceForm {
       position: relative;
       z-index: 1;
@@ -279,7 +273,7 @@
     }
 
     .field {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .field:last-child {
@@ -291,13 +285,13 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 7px;
+      margin-bottom: 6px;
     }
 
     input {
       width: 100%;
-      height: 52px;
-      padding: 12px 16px;
+      height: 50px;
+      padding: 10px 14px;
       border: 1.5px solid var(--border);
       border-radius: var(--radius-md);
       font-size: 16px;
@@ -317,6 +311,71 @@
     input:focus {
       border-color: var(--banner-orange);
       box-shadow: 0 0 0 4px rgba(249, 115, 33, 0.12);
+    }
+
+    /* DYNAMIC CHILD ENTRIES */
+    .child-entry {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .child-entry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .child-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0e85a0;
+      background: rgba(24, 181, 217, 0.1);
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .remove-child-btn {
+      background: rgba(255, 0, 85, 0.08);
+      color: var(--banner-magenta);
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+
+    .child-row-grid {
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      gap: 12px;
+    }
+
+    .add-child-button {
+      width: 100%;
+      height: 44px;
+      background: rgba(24, 181, 217, 0.08);
+      border: 1.5px dashed var(--banner-cyan);
+      border-radius: 10px;
+      color: #0b7a94;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .add-child-button:active {
+      background: rgba(24, 181, 217, 0.16);
     }
 
     /* SIGNATURE */
@@ -376,14 +435,9 @@
       letter-spacing: 0.4px;
       padding: 7px 12px;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
-    .clear-button:active {
-      background: rgba(255, 0, 85, 0.08);
-    }
-
-    /* CONSENT */
+    /* CONSENT & SUBMIT */
     .notice {
       font-size: 12px;
       color: var(--muted);
@@ -393,7 +447,6 @@
       padding: 0 8px;
     }
 
-    /* SUBMIT */
     .submit-button {
       width: 100%;
       height: 58px;
@@ -412,7 +465,6 @@
 
     .submit-button:active {
       transform: translateY(1px);
-      box-shadow: 0 4px 12px rgba(249, 115, 33, 0.22);
     }
 
     .submit-button:disabled {
@@ -421,17 +473,14 @@
       box-shadow: none;
     }
 
-    /* STATUS */
     #status {
       text-align: center;
       font-size: 14px;
       font-weight: 600;
       margin-top: 14px;
       min-height: 21px;
-      line-height: 1.5;
     }
 
-    /* SUCCESS SCREEN */
     .success-screen {
       display: none;
       text-align: center;
@@ -466,83 +515,30 @@
       margin: 6px 0;
     }
 
-    /* LANDSCAPE TABLET */
     @media (orientation: landscape) and (min-width: 700px) {
-      body {
-        padding: 25px;
-      }
-
-      .app {
-        max-width: 1020px;
-        padding: 42px 44px 36px;
-      }
-
+      body { padding: 25px; }
+      .app { max-width: 1020px; padding: 42px 44px 36px; }
       #attendanceForm {
         display: grid;
         grid-template-columns: 1fr 1fr;
         column-gap: 26px;
         row-gap: 20px;
-        align-items: stretch;
+        align-items: start;
       }
-
-      .section {
-        margin-bottom: 0;
-      }
-
-      .signature-section,
-      .notice,
-      .submit-button {
-        grid-column: 1 / -1;
-      }
-
-      .notice {
-        margin: 4px 0;
-      }
-
-      canvas {
-        height: 195px;
-      }
+      .section { margin-bottom: 0; }
+      .signature-section, .notice, .submit-button { grid-column: 1 / -1; }
+      .notice { margin: 4px 0; }
+      canvas { height: 195px; }
     }
 
-    /* PORTRAIT TABLET */
-    @media (orientation: portrait) and (min-width: 600px) {
-      .app {
-        max-width: 620px;
-        padding: 44px 38px 36px;
-      }
-
-      canvas {
-        height: 215px;
-      }
-    }
-
-    /* MOBILE */
     @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-
-      .app {
-        padding: 36px 18px 24px;
-        border-radius: 20px;
-      }
-
-      .welcome-banner {
-        font-size: 32px;
-        -webkit-text-stroke: 5px var(--banner-yellow);
-      }
-
-      .kids-word {
-        font-size: 36px;
-      }
-
-      .kingdom-title {
-        font-size: 25px;
-      }
-
-      .section {
-        padding: 16px;
-      }
+      body { padding: 10px; }
+      .app { padding: 36px 18px 24px; border-radius: 20px; }
+      .welcome-banner { font-size: 32px; -webkit-text-stroke: 5px var(--banner-yellow); }
+      .kids-word { font-size: 36px; }
+      .kingdom-title { font-size: 25px; }
+      .section { padding: 16px; }
+      .child-row-grid { grid-template-columns: 1fr 90px; gap: 10px; }
     }
   </style>
 </head>
@@ -551,15 +547,11 @@
 
 <div class="app">
 
-  <!-- DECORATIVE BANNER ACCENTS -->
   <div class="banner-blobs-top"></div>
   <div class="corner-blob blob-tl"></div>
   <div class="corner-blob blob-tr"></div>
 
-  <!-- HEADER (MATCHING BANNER) -->
   <div class="header">
-
-    <!-- Hand-drawn double black swoosh above WELCOME -->
     <svg class="welcome-arc" viewBox="0 0 180 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M15 24 C 65 4, 125 4, 170 16" stroke="#111" stroke-width="3" stroke-linecap="round"/>
       <path d="M35 26 C 80 10, 130 10, 165 21" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
@@ -571,7 +563,6 @@
 
     <div class="to-text">TO</div>
 
-    <!-- Hand-drawn orange circle around multi-colored "Kids" -->
     <div class="kids-oval-wrap">
       <svg class="kids-oval-svg" viewBox="0 0 200 85" fill="none" preserveAspectRatio="none">
         <path d="M18 42 C16 14, 182 10, 186 42 C190 72, 22 76, 14 44 C10 22, 175 16, 182 45" stroke="#f97321" stroke-width="3.5" stroke-linecap="round"/>
@@ -583,7 +574,6 @@
 
     <div class="kingdom-title">KINGDOM</div>
 
-    <!-- Triple black underline strokes below KINGDOM -->
     <svg class="kingdom-strikes" viewBox="0 0 240 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M10 6 Q 120 3, 225 10" stroke="#111" stroke-width="3.2" stroke-linecap="round"/>
       <path d="M45 13 Q 140 11, 232 17" stroke="#111" stroke-width="2.6" stroke-linecap="round"/>
@@ -595,14 +585,13 @@
     </div>
 
     <div class="instruction">
-      Please complete the form below to sign your child in.
+      Please complete the form below to sign your child(ren) in.
     </div>
-
   </div>
 
-  <!-- ATTENDANCE FORM (CLEAN & PROFESSIONAL FOR PARENTS) -->
   <form id="attendanceForm">
 
+    <!-- PARENT DETAILS -->
     <div class="section section-parent">
       <div class="section-title">Parent / Guardian Details</div>
 
@@ -631,31 +620,15 @@
       </div>
     </div>
 
+    <!-- CHILDREN DETAILS (SUPPORTS MULTIPLE) -->
     <div class="section section-child">
-      <div class="section-title">Child's Details</div>
+      <div class="section-title">Children's Details</div>
 
-      <div class="field">
-        <label for="childName">Child's Full Name</label>
-        <input
-          type="text"
-          id="childName"
-          maxlength="100"
-          placeholder="Enter child's full name"
-          required
-        >
-      </div>
+      <div id="childrenContainer"></div>
 
-      <div class="field">
-        <label for="childAge">Child's Age</label>
-        <input
-          type="number"
-          id="childAge"
-          min="0"
-          max="18"
-          placeholder="Enter child's age"
-          required
-        >
-      </div>
+      <button type="button" class="add-child-button" onclick="addChildEntry()">
+        + ADD ANOTHER CHILD
+      </button>
     </div>
 
     <!-- SIGNATURE -->
@@ -666,7 +639,7 @@
         <canvas id="signaturePad"></canvas>
 
         <div class="signature-footer">
-          <span class="signature-hint">Sign using your finger or stylus.</span>
+          <span class="signature-hint">One signature applies to all children listed above.</span>
           <button
             type="button"
             class="clear-button"
@@ -677,12 +650,10 @@
       </div>
     </div>
 
-    <!-- NOTICE -->
     <div class="notice">
-      By signing, I confirm that the information provided is correct and that I am signing my child into Kids' Kingdom today. My signature will be recorded with this attendance entry.
+      By signing, I confirm that the information provided is correct and that I am signing my child(ren) into Kids' Kingdom today.
     </div>
 
-    <!-- SUBMIT -->
     <button
       type="submit"
       class="submit-button"
@@ -692,28 +663,80 @@
 
   </form>
 
-  <!-- STATUS -->
   <div id="status"></div>
 
-  <!-- SUCCESS SCREEN -->
   <div class="success-screen" id="successScreen">
     <div class="success-icon">✓</div>
-    <h2>Successfully Signed In!</h2>
-    <p>Thank you for signing your child into Kids' Kingdom.</p>
+    <h2 id="successTitle">Successfully Signed In!</h2>
+    <p id="successText">Thank you for signing your child into Kids' Kingdom.</p>
     <p>Have a blessed Sunday! ❤️</p>
   </div>
 
 </div>
 
 <script>
-  // SIGNATURE PAD
   const canvas = document.getElementById("signaturePad");
   const ctx = canvas.getContext("2d");
 
   let drawing = false;
   let hasSignature = false;
   let submitting = false;
+  let resetTimer;
+  let inactivityTimer;
 
+  // DYNAMIC CHILD FIELDS
+  function addChildEntry() {
+    startInactivityTimer();
+    const container = document.getElementById("childrenContainer");
+    const entry = document.createElement("div");
+    entry.className = "child-entry";
+
+    entry.innerHTML = `
+      <div class="child-entry-header">
+        <span class="child-badge">Child</span>
+        <button type="button" class="remove-child-btn" onclick="removeChildEntry(this)">✕ Remove</button>
+      </div>
+      <div class="child-row-grid">
+        <div>
+          <label>Child's Full Name</label>
+          <input type="text" class="child-name-input" maxlength="100" placeholder="Full name" required>
+        </div>
+        <div>
+          <label>Age</label>
+          <input type="number" class="child-age-input" min="0" max="18" placeholder="0-18" required>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(entry);
+    updateChildEntriesUI();
+  }
+
+  function removeChildEntry(btn) {
+    startInactivityTimer();
+    const container = document.getElementById("childrenContainer");
+    if (container.children.length <= 1) return;
+    btn.closest(".child-entry").remove();
+    updateChildEntriesUI();
+  }
+
+  function updateChildEntriesUI() {
+    const entries = document.querySelectorAll("#childrenContainer .child-entry");
+    entries.forEach(function(entry, idx) {
+      entry.querySelector(".child-badge").textContent = "Child #" + (idx + 1);
+      const removeBtn = entry.querySelector(".remove-child-btn");
+      removeBtn.style.display = entries.length > 1 ? "inline-block" : "none";
+    });
+
+    const submitBtn = document.getElementById("submitButton");
+    if (!submitting) {
+      submitBtn.textContent = entries.length > 1
+        ? "SIGN IN " + entries.length + " CHILDREN"
+        : "SIGN IN CHILD";
+    }
+  }
+
+  // SIGNATURE PAD
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
     if (rect.width === 0) return;
@@ -730,7 +753,6 @@
     hasSignature = false;
   }
 
-  resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
   function getPosition(event) {
@@ -773,7 +795,6 @@
     hasSignature = false;
   }
 
-  // FORM STATUS
   function showStatus(message, type) {
     const status = document.getElementById("status");
     status.textContent = message;
@@ -783,13 +804,12 @@
       "#68767a";
   }
 
-  // RESET FORM
-  let resetTimer;
-  let inactivityTimer;
-
   function resetApplication() {
     const form = document.getElementById("attendanceForm");
     form.reset();
+
+    document.getElementById("childrenContainer").innerHTML = "";
+    addChildEntry();
 
     form.style.display = "";
     document.getElementById("successScreen").style.display = "none";
@@ -801,12 +821,11 @@
     submitting = false;
     const button = document.getElementById("submitButton");
     button.disabled = false;
-    button.textContent = "SIGN IN CHILD";
+    updateChildEntriesUI();
 
     startInactivityTimer();
   }
 
-  // AUTOMATIC INACTIVITY RESET
   function startInactivityTimer() {
     clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(function() {
@@ -831,11 +850,22 @@
         return;
       }
 
+      const entries = document.querySelectorAll("#childrenContainer .child-entry");
+      const childrenList = [];
+
+      entries.forEach(function(entry) {
+        const nameVal = entry.querySelector(".child-name-input").value.trim();
+        const ageVal = entry.querySelector(".child-age-input").value;
+        childrenList.push({
+          childName: nameVal,
+          childAge: ageVal
+        });
+      });
+
       const payload = {
         parentName: document.getElementById("parentName").value.trim(),
         parentPhone: document.getElementById("parentPhone").value.trim(),
-        childName: document.getElementById("childName").value.trim(),
-        childAge: document.getElementById("childAge").value,
+        children: childrenList,
         signature: canvas.toDataURL("image/png")
       };
 
@@ -854,12 +884,16 @@
             showStatus("Unable to confirm submission.", "error");
             submitting = false;
             button.disabled = false;
-            button.textContent = "SIGN IN CHILD";
+            updateChildEntriesUI();
             startInactivityTimer();
             return;
           }
 
           document.getElementById("attendanceForm").style.display = "none";
+          document.getElementById("successText").textContent =
+            childrenList.length > 1
+              ? "Thank you for signing your " + childrenList.length + " children into Kids' Kingdom."
+              : "Thank you for signing your child into Kids' Kingdom.";
           document.getElementById("successScreen").style.display = "block";
           showStatus("", "");
 
@@ -869,13 +903,15 @@
           showStatus(error.message, "error");
           submitting = false;
           button.disabled = false;
-          button.textContent = "SIGN IN CHILD";
+          updateChildEntriesUI();
           startInactivityTimer();
         })
         .submitAttendance(payload);
     });
 
   // INITIALISE
+  addChildEntry();
+  resizeCanvas();
   startInactivityTimer();
 </script>
 
