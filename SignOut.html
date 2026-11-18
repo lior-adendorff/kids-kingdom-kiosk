@@ -14,7 +14,6 @@
     }
 
     :root {
-      /* Banner Palette */
       --banner-yellow: #ffd014;
       --banner-magenta: #ff0055;
       --banner-green: #69d84f;
@@ -24,7 +23,6 @@
       --banner-coral: #f27474;
       --crimson-crest: #8b0000;
 
-      /* UI Theme */
       --background: #fbf6f3;
       --surface: #ffffff;
       --surface-alt: #fcf9f7;
@@ -65,7 +63,6 @@
       border: 1px solid rgba(230, 223, 220, 0.8);
     }
 
-    /* BANNER COLOR BLOBS */
     .banner-blobs-top {
       position: absolute;
       top: 0;
@@ -135,9 +132,7 @@
       paint-order: stroke fill;
     }
 
-    .welcome-banner span {
-      display: inline-block;
-    }
+    .welcome-banner span { display: inline-block; }
     .welcome-banner .c1 { color: var(--banner-cyan); transform: rotate(-3deg); }
     .welcome-banner .c2 { color: var(--banner-purple); transform: rotate(2deg); }
     .welcome-banner .c3 { color: var(--banner-coral); transform: rotate(-2deg); }
@@ -273,11 +268,6 @@
       font-weight: 700;
       padding: 6px 12px;
       cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .refresh-btn:active {
-      background: var(--border);
     }
 
     /* CHILD TABS GRID */
@@ -452,7 +442,6 @@
       cursor: pointer;
     }
 
-    /* NOTICE & SUBMIT */
     .notice {
       font-size: 12px;
       color: var(--muted);
@@ -488,7 +477,6 @@
       box-shadow: none;
     }
 
-    /* STATUS & SUCCESS */
     #status {
       text-align: center;
       font-size: 14px;
@@ -532,42 +520,17 @@
     }
 
     @media (orientation: landscape) and (min-width: 700px) {
-      .app {
-        max-width: 920px;
-        padding: 40px 42px 34px;
-      }
-
-      .children-grid {
-        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      }
+      .app { max-width: 920px; padding: 40px 42px 34px; }
+      .children-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-
-      .app {
-        padding: 36px 18px 24px;
-        border-radius: 20px;
-      }
-
-      .welcome-banner {
-        font-size: 30px;
-        -webkit-text-stroke: 5px var(--banner-yellow);
-      }
-
-      .kids-word {
-        font-size: 34px;
-      }
-
-      .kingdom-title {
-        font-size: 24px;
-      }
-
-      .section {
-        padding: 16px;
-      }
+      body { padding: 10px; }
+      .app { padding: 36px 18px 24px; border-radius: 20px; }
+      .welcome-banner { font-size: 30px; -webkit-text-stroke: 5px var(--banner-yellow); }
+      .kids-word { font-size: 34px; }
+      .kingdom-title { font-size: 24px; }
+      .section { padding: 16px; }
     }
   </style>
 </head>
@@ -576,12 +539,10 @@
 
 <div class="app">
 
-  <!-- DECORATIVE BANNER ACCENTS -->
   <div class="banner-blobs-top"></div>
   <div class="corner-blob blob-tl"></div>
   <div class="corner-blob blob-tr"></div>
 
-  <!-- HEADER -->
   <div class="header">
     <svg class="welcome-arc" viewBox="0 0 180 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M15 24 C 65 4, 125 4, 170 16" stroke="#111" stroke-width="3" stroke-linecap="round"/>
@@ -614,17 +575,16 @@
     </div>
 
     <div class="instruction">
-      Select your child's name below and sign to complete pickup.
+      Tap one or more children below and sign once to complete pickup.
     </div>
   </div>
 
-  <!-- SIGN-OUT FORM -->
   <form id="signOutForm">
 
-    <!-- STEP 1: SELECT CHILD TAB -->
+    <!-- STEP 1: SELECT ONE OR MORE CHILDREN -->
     <div class="section section-children">
       <div class="section-header-row">
-        <div class="section-title">1. Select Your Child (Signed In Today)</div>
+        <div class="section-title">1. Select Your Child(ren) (Tap All That Apply)</div>
         <button type="button" class="refresh-btn" onclick="loadSignedInChildren()">↻ Refresh List</button>
       </div>
 
@@ -633,7 +593,7 @@
       </div>
     </div>
 
-    <!-- STEP 2: SIGNATURE (REVEALED ON CHILD SELECTION) -->
+    <!-- STEP 2: SIGNATURE -->
     <div id="signatureWrapper" class="signature-wrapper">
       <div class="section signature-section">
         <div class="section-title">2. Parent / Guardian Sign-Out Signature</div>
@@ -646,7 +606,7 @@
           <canvas id="signaturePad"></canvas>
 
           <div class="signature-footer">
-            <span class="signature-hint">Sign using your finger or stylus.</span>
+            <span class="signature-hint">One signature applies to all selected children.</span>
             <button
               type="button"
               class="clear-button"
@@ -658,7 +618,7 @@
       </div>
 
       <div class="notice">
-        By signing, I confirm that I am picking up my child from Kids' Kingdom today.
+        By signing, I confirm that I am picking up the selected child(ren) from Kids' Kingdom today.
       </div>
 
       <button
@@ -671,14 +631,12 @@
 
   </form>
 
-  <!-- STATUS -->
   <div id="status"></div>
 
-  <!-- SUCCESS SCREEN -->
   <div class="success-screen" id="successScreen">
     <div class="success-icon">✓</div>
     <h2>Successfully Signed Out!</h2>
-    <p>Thank you! Your child has been signed out of Kids' Kingdom.</p>
+    <p id="successText">Thank you! Your child has been signed out of Kids' Kingdom.</p>
     <p>Have a blessed week ahead! ❤️</p>
   </div>
 
@@ -691,7 +649,7 @@
   let drawing = false;
   let hasSignature = false;
   let submitting = false;
-  let selectedChild = null;
+  let selectedChildren = [];
   let inactivityTimer;
 
   function resizeCanvas() {
@@ -761,12 +719,11 @@
       "#68767a";
   }
 
-  // LOAD TODAY'S SIGNED-IN CHILDREN
   function loadSignedInChildren() {
     const listContainer = document.getElementById("childrenList");
     listContainer.innerHTML = '<div class="empty-state">Loading today\'s signed-in children...</div>';
 
-    selectedChild = null;
+    selectedChildren = [];
     document.getElementById("signatureWrapper").style.display = "none";
     showStatus("", "");
 
@@ -812,43 +769,56 @@
       tab.appendChild(checkEl);
 
       tab.addEventListener("click", function() {
-        selectChildTab(item, tab);
+        toggleChildTab(item, tab);
       });
 
       listContainer.appendChild(tab);
     });
   }
 
-  function selectChildTab(item, tabElement) {
+  function toggleChildTab(item, tabElement) {
     startInactivityTimer();
 
-    const allTabs = document.querySelectorAll(".child-tab");
-    allTabs.forEach(function(t) {
-      t.classList.remove("selected");
+    const existingIndex = selectedChildren.findIndex(function(c) {
+      return c.rowIndex === item.rowIndex;
     });
 
-    tabElement.classList.add("selected");
-    selectedChild = item;
-
-    document.getElementById("selectedChildLabel").textContent =
-      item.childName + " (Parent: " + item.parentName + ")";
+    if (existingIndex > -1) {
+      selectedChildren.splice(existingIndex, 1);
+      tabElement.classList.remove("selected");
+    } else {
+      selectedChildren.push(item);
+      tabElement.classList.add("selected");
+    }
 
     const wrapper = document.getElementById("signatureWrapper");
+    const submitBtn = document.getElementById("submitButton");
+
+    if (selectedChildren.length === 0) {
+      wrapper.style.display = "none";
+      clearSignature();
+      return;
+    }
+
+    const names = selectedChildren.map(function(c) { return c.childName; }).join(", ");
+    document.getElementById("selectedChildLabel").textContent = names;
+
+    submitBtn.textContent = selectedChildren.length > 1
+      ? "SIGN OUT " + selectedChildren.length + " CHILDREN"
+      : "SIGN OUT CHILD";
+
     const wasHidden = wrapper.style.display !== "block";
     wrapper.style.display = "block";
 
-    // Resize canvas after wrapper becomes visible so dimensions are accurate
     if (wasHidden) {
       setTimeout(resizeCanvas, 20);
-    } else {
-      clearSignature();
     }
 
     showStatus("", "");
   }
 
   function resetApplication() {
-    selectedChild = null;
+    selectedChildren = [];
     clearSignature();
     document.getElementById("signatureWrapper").style.display = "none";
     document.getElementById("successScreen").style.display = "none";
@@ -883,8 +853,8 @@
 
       if (submitting) return;
 
-      if (!selectedChild) {
-        showStatus("Please select your child first.", "error");
+      if (selectedChildren.length === 0) {
+        showStatus("Please select at least one child first.", "error");
         return;
       }
 
@@ -893,8 +863,14 @@
         return;
       }
 
+      const rowIndices = selectedChildren.map(function(c) {
+        return c.rowIndex;
+      });
+
+      const countSignedOut = rowIndices.length;
+
       const payload = {
-        rowIndex: selectedChild.rowIndex,
+        rowIndices: rowIndices,
         signature: canvas.toDataURL("image/png")
       };
 
@@ -913,12 +889,18 @@
             showStatus("Unable to confirm sign-out.", "error");
             submitting = false;
             button.disabled = false;
-            button.textContent = "SIGN OUT CHILD";
+            button.textContent = countSignedOut > 1
+              ? "SIGN OUT " + countSignedOut + " CHILDREN"
+              : "SIGN OUT CHILD";
             startInactivityTimer();
             return;
           }
 
           document.getElementById("signOutForm").style.display = "none";
+          document.getElementById("successText").textContent =
+            countSignedOut > 1
+              ? "Thank you! Your " + countSignedOut + " children have been signed out of Kids' Kingdom."
+              : "Thank you! Your child has been signed out of Kids' Kingdom.";
           document.getElementById("successScreen").style.display = "block";
           showStatus("", "");
 
@@ -928,7 +910,9 @@
           showStatus(error.message, "error");
           submitting = false;
           button.disabled = false;
-          button.textContent = "SIGN OUT CHILD";
+          button.textContent = countSignedOut > 1
+            ? "SIGN OUT " + countSignedOut + " CHILDREN"
+            : "SIGN OUT CHILD";
           startInactivityTimer();
         })
         .processSignOut(payload);
