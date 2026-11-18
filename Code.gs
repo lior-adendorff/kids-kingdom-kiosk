@@ -5,12 +5,9 @@ const CONFIG = {
   MAX_SIGNATURE_SIZE: 500000,
   MAX_NAME_LENGTH: 100,
   MAX_PHONE_LENGTH: 25,
-  MAX_CHILD_AGE: 18
+  MAX_CHILD_AGE: 9
 };
 
-/**
- * Run this function once from the Apps Script editor to set up headers.
- */
 function setupDatabase() {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -92,9 +89,6 @@ function getSignatureFolder() {
   return folder;
 }
 
-/**
- * Routes requests: ?page=signout loads SignOut.html, otherwise Index.html
- */
 function doGet(e) {
   const page = e && e.parameter && e.parameter.page;
   
@@ -103,6 +97,13 @@ function doGet(e) {
       .createHtmlOutputFromFile("SignOut")
       .addMetaTag("viewport", "width=device-width, initial-scale=1")
       .setTitle("Kid's Kingdom - Sign Out");
+  }
+
+  if (page === "dashboard") {
+    return HtmlService
+      .createHtmlOutputFromFile("Dashboard")
+      .addMetaTag("viewport", "width=device-width, initial-scale=1")
+      .setTitle("Kid's Kingdom - Teacher Dashboard");
   }
 
   return HtmlService
@@ -134,9 +135,6 @@ function validateSignature(signature) {
   return bytes;
 }
 
-/**
- * Validates and records sign-in data.
- */
 function submitAttendance(data) {
   const lock = LockService.getScriptLock();
   let signatureFile = null;
@@ -147,12 +145,40 @@ function submitAttendance(data) {
 
     const parentName = String(data.parentName || "").trim();
     const parentPhone = String(data.parentPhone || "").trim();
-    const childName = String(data.childName || "").trim();
-    const childAge = Number(data.childAge);
 
-    if (!parentName || !parentPhone || !childName ||isNaN(childAge)) {
-      throw new Error("Please complete all required fields.");
+    if (!parentName || !parentPhone) {
+      throw new Error("Please enter parent/guardian details.");
     }
+
+    if (parentName.length > CONFIG.MAX_NAME_LENGTH) {
+      throw new Error("Parent name is too long.");
+    }
+
+    if (parentPhone.length > CONFIG.MAX_PHONE_LENGTH || !/^[0-9+()\-\s]+$/.test(parentPhone)) {
+      throw new Error("Please enter a valid phone number.");
+    }
+
+    const rawChildren = Array.isArray(data.children) ? data.children : [];
+    if (rawChildren.length === 0) {
+      throw new Error("Please add at least one child.");
+    }
+
+    const validatedChildren = rawChildren.map(function(child, idx) {
+      const cName = String(child.childName || "").trim();
+      const cAgeStr = String(child.childAge ?? "").trim();
+      const cAge = Number(cAgeStr);
+
+      if (!cName || cAgeStr === "" || isNaN(cAge)) {
+        throw new Error("Please complete all details for Child #" + (idx + 1) + ".");
+      }
+      if (cName.length > CONFIG.MAX_NAME_LENGTH) {
+        throw new Error("Name for Child #" + (idx + 1) + " is too long.");
+      }
+      if (!Number.isInteger(cAge) || cAge < 0 || cAge > CONFIG.MAX_CHILD_AGE) {
+        throw new Error("Please enter a valid age (0-" + CONFIG.MAX_CHILD_AGE + ") for " + cName + ".");
+      }
+      return { childName: cName, childAge: cAge };
+    });
 
     const bytes = validateSignature(data.signature);
     const folder = getSignatureFolder();
@@ -161,22 +187,30 @@ function submitAttendance(data) {
       Utilities.newBlob(bytes, "image/png", "signin_" + Utilities.getUuid() + ".png")
     );
 
+    const sigId = signatureFile.getId();
+    const timestamp = new Date();
     const sheet = getDatabaseSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
     
-    sheet.appendRow([
-      new Date(),
-      parentName,
-      parentPhone,
-      childName,
-      childAge,
-      signatureFile.getId(),
-      "",
-      "",
-      "Signed In"
-    ]);
+    validatedChildren.forEach(function(child) {
+      sheet.appendRow([
+        timestamp,
+        parentName,
+        parentPhone,
+        child.childName,
+        child.childAge,
+        sigId,
+        "",
+        "",
+        "Signed In"
+      ]);
+    });
 
     SpreadsheetApp.flush();
-    return { success: true, message: "Signed in successfully!" };
+    return {
+      success: true,
+      count: validatedChildren.length,
+      message: "Signed in successfully!"
+    };
 
   } catch (error) {
     if (signatureFile) try { signatureFile.setTrashed(true); } catch(e){}
@@ -186,9 +220,6 @@ function submitAttendance(data) {
   }
 }
 
-/**
- * Returns a list of children signed in today who haven't been signed out yet.
- */
 function getSignedInsToday() {
   const sheet = getDatabaseSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
   const rows = sheet.getDataRange().getValues();
@@ -196,17 +227,16 @@ function getSignedInsToday() {
   
   const activeChildren = [];
 
-  // Skip header row (index 0)
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     const timestamp = row[0];
-    const status = row[8]; // Column I
+    const status = row[8];
 
     if (timestamp) {
       const rowDateStr = Utilities.formatDate(new Date(timestamp), CONFIG.TIMEZONE, "yyyy-MM-dd");
       if (rowDateStr === todayStr && status === "Signed In") {
         activeChildren.push({
-          rowIndex: i + 1, // 1-based sheet row index
+          rowIndex: i + 1,
           childName: row[3],
           parentName: row[1],
           parentPhone: row[2]
@@ -218,16 +248,21 @@ function getSignedInsToday() {
   return activeChildren;
 }
 
-/**
- * Processes the sign-out action for a selected child.
- */
 function processSignOut(data) {
   const lock = LockService.getScriptLock();
   let signatureFile = null;
 
   try {
     lock.waitLock(15000);
-    if (!data || !data.rowIndex) throw new Error("Invalid sign-out request.");
+    if (!data) throw new Error("Invalid sign-out request.");
+
+    const rawIndices = Array.isArray(data.rowIndices)
+      ? data.rowIndices
+      : (data.rowIndex ? [data.rowIndex] : []);
+
+    if (rawIndices.length === 0) {
+      throw new Error("Please select at least one child to sign out.");
+    }
 
     const bytes = validateSignature(data.signature);
     const folder = getSignatureFolder();
@@ -236,16 +271,23 @@ function processSignOut(data) {
       Utilities.newBlob(bytes, "image/png", "signout_" + Utilities.getUuid() + ".png")
     );
 
+    const sigId = signatureFile.getId();
+    const now = new Date();
     const sheet = getDatabaseSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
-    const rowIndex = Number(data.rowIndex);
 
-    // Update columns G (SignOutTimestamp), H (SignOutSignatureFileID), I (Status)
-    sheet.getRange(rowIndex, 7).setValue(new Date());
-    sheet.getRange(rowIndex, 8).setValue(signatureFile.getId());
-    sheet.getRange(rowIndex, 9).setValue("Signed Out");
+    rawIndices.forEach(function(idx) {
+      const rowIndex = Number(idx);
+      if (rowIndex > 1) {
+        sheet.getRange(rowIndex, 7, 1, 3).setValues([[now, sigId, "Signed Out"]]);
+      }
+    });
 
     SpreadsheetApp.flush();
-    return { success: true, message: "Child signed out successfully!" };
+    return {
+      success: true,
+      count: rawIndices.length,
+      message: "Signed out successfully!"
+    };
 
   } catch (error) {
     if (signatureFile) try { signatureFile.setTrashed(true); } catch(e){}
@@ -259,4 +301,46 @@ function testConnection() {
   const spreadsheet = getDatabaseSpreadsheet();
   const sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
   return { success: true, worksheet: sheet.getName(), message: "Connection successful!" };
+}
+
+function getDashboardData() {
+  const sheet = getDatabaseSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
+  const rows = sheet.getDataRange().getValues();
+  const todayStr = Utilities.formatDate(new Date(), CONFIG.TIMEZONE, "yyyy-MM-dd");
+
+  const currentlyIn = [];
+  const checkedOut = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const timestamp = row[0];
+    const status = row[8];
+
+    if (timestamp) {
+      const rowDateStr = Utilities.formatDate(new Date(timestamp), CONFIG.TIMEZONE, "yyyy-MM-dd");
+      
+      if (rowDateStr === todayStr) {
+        const record = {
+          childName: row[3],
+          childAge: row[4],
+          parentName: row[1],
+          parentPhone: row[2],
+          signInTime: Utilities.formatDate(new Date(timestamp), CONFIG.TIMEZONE, "HH:mm"),
+          signOutTime: row[6] ? Utilities.formatDate(new Date(row[6]), CONFIG.TIMEZONE, "HH:mm") : "—"
+        };
+
+        if (status === "Signed In") {
+          currentlyIn.push(record);
+        } else {
+          checkedOut.push(record);
+        }
+      }
+    }
+  }
+
+  return {
+    date: Utilities.formatDate(new Date(), CONFIG.TIMEZONE, "EEEE, MMMM d, yyyy"),
+    currentlyIn: currentlyIn,
+    checkedOut: checkedOut
+  };
 }
