@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;800&family=Fredoka:wght@700&family=Architects+Daughter&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      /* Banner Palette */
+      --banner-yellow: #ffd014;
+      --banner-magenta: #ff0055;
+      --banner-green: #69d84f;
+      --banner-purple: #b37cd9;
+      --banner-orange: #f97321;
+      --banner-cyan: #18b5d9;
+      --banner-coral: #f27474;
+      --crimson-crest: #8b0000;
+
+      /* UI Theme */
+      --background: #fbf6f3;
+      --surface: #ffffff;
+      --surface-alt: #fcf9f7;
+      --text: #1e292b;
+      --muted: #68767a;
+      --border: #e6dfdc;
+      --radius-lg: 26px;
+      --radius-md: 12px;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--background);
+      background-image: 
+        radial-gradient(circle at 12% 18%, rgba(255, 208, 20, 0.14) 0%, transparent 25%),
+        radial-gradient(circle at 88% 12%, rgba(179, 124, 217, 0.14) 0%, transparent 25%),
+        radial-gradient(circle at 85% 85%, rgba(105, 216, 79, 0.12) 0%, transparent 28%),
+        radial-gradient(circle at 15% 88%, rgba(249, 115, 33, 0.12) 0%, transparent 25%);
+      color: var(--text);
+    }
+
+    .app {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 660px;
+      margin: auto;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 44px 32px 34px;
+      box-shadow: 0 20px 50px rgba(30, 41, 43, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(230, 223, 220, 0.8);
+    }
+
+    /* BANNER COLOR BLOBS AT TOP & BOTTOM */
+    .banner-blobs-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 14px;
+      background: linear-gradient(90deg, 
+        var(--banner-yellow) 0%, var(--banner-yellow) 20%, 
+        var(--banner-magenta) 20%, var(--banner-magenta) 40%, 
+        var(--banner-orange) 40%, var(--banner-orange) 60%, 
+        var(--banner-green) 60%, var(--banner-green) 80%, 
+        var(--banner-purple) 80%, var(--banner-purple) 100%);
+    }
+
+    .corner-blob {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    .blob-tl {
+      top: -28px;
+      left: -28px;
+      width: 110px;
+      height: 110px;
+      background: var(--banner-yellow);
+      border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%;
+    }
+
+    .blob-tr {
+      top: -32px;
+      right: -24px;
+      width: 115px;
+      height: 115px;
+      background: var(--banner-purple);
+      border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%;
+    }
+
+    /* HEADER (RECREATING BANNER TYPOGRAPHY) */
+    .header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 22px;
+      border-bottom: 1.5px dashed var(--border);
+    }
+
+    .welcome-arc {
+      display: block;
+      margin: 0 auto -6px;
+      width: 150px;
+      height: 22px;
+    }
+
+    .welcome-banner {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      line-height: 1.05;
+      margin: 0;
+      display: inline-block;
+      /* Thick yellow sticker outline like the banner */
+      filter: drop-shadow(0px 2px 0px var(--banner-yellow));
+      -webkit-text-stroke: 6px var(--banner-yellow);
+      paint-order: stroke fill;
+    }
+
+    .welcome-banner span {
+      display: inline-block;
+    }
+    .welcome-banner .w { color: var(--banner-cyan); transform: rotate(-4deg); }
+    .welcome-banner .e1 { color: var(--banner-purple); transform: rotate(2deg); }
+    .welcome-banner .l { color: var(--banner-coral); transform: rotate(-2deg); }
+    .welcome-banner .c { color: var(--banner-cyan); transform: rotate(3deg); }
+    .welcome-banner .o { color: var(--banner-purple); transform: rotate(-2deg); }
+    .welcome-banner .m { color: var(--banner-coral); transform: rotate(2deg); }
+    .welcome-banner .e2 { color: var(--banner-cyan); transform: rotate(-3deg); }
+
+    .to-text {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #111;
+      margin: 6px 0 4px;
+      letter-spacing: 2px;
+    }
+
+    .kids-oval-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 32px 10px;
+      margin: 2px 0 6px;
+    }
+
+    .kids-oval-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .kids-word {
+      position: relative;
+      font-family: 'Architects Daughter', cursive, sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 1px;
+    }
+
+    .kids-word .k { color: var(--banner-purple); }
+    .kids-word .i { color: var(--banner-cyan); }
+    .kids-word .d { color: var(--banner-magenta); }
+    .kids-word .s { color: var(--banner-green); }
+
+    .kingdom-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #111111;
+      margin: 4px 0 0;
+      line-height: 1.1;
+    }
+
+    .kingdom-strikes {
+      display: block;
+      margin: 2px auto 14px;
+      width: 210px;
+      height: 20px;
+    }
+
+    .church-badge {
+      display: inline-block;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--crimson-crest);
+      background: rgba(139, 0, 0, 0.06);
+      border: 1px solid rgba(139, 0, 0, 0.18);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .instruction {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* PROFESSIONAL FORM SECTIONS */
+    #attendanceForm {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      margin-bottom: 22px;
+      background: var(--surface-alt);
+      padding: 22px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.015);
+    }
+
+    .section-parent {
+      border-top: 4px solid var(--banner-orange);
+    }
+
+    .section-child {
+      border-top: 4px solid var(--banner-cyan);
+    }
+
+    .section-title {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-parent .section-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--banner-orange);
+    }
+
+    .section-child .section-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--banner-cyan);
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      height: 52px;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #a6b2b5;
+      font-weight: 400;
+    }
+
+    input:focus {
+      border-color: var(--banner-orange);
+      box-shadow: 0 0 0 4px rgba(249, 115, 33, 0.12);
+    }
+
+    /* SIGNATURE */
+    .signature-section {
+      border-top: 4px solid var(--banner-purple);
+    }
+
+    .signature-section .section-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--banner-purple);
+    }
+
+    .signature-box {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 185px;
+      background: radial-gradient(#e2e8e7 1px, transparent 1px);
+      background-size: 16px 16px;
+      background-color: #ffffff;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .signature-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #f5f2f0;
+      border-top: 1px solid var(--border);
+    }
+
+    .signature-hint {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .clear-button {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--banner-magenta);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .clear-button:active {
+      background: rgba(255, 0, 85, 0.08);
+    }
+
+    /* CONSENT */
+    .notice {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 18px 0;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    /* SUBMIT */
+    .submit-button {
+      width: 100%;
+      height: 58px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--banner-orange) 0%, var(--banner-magenta) 100%);
+      color: white;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(249, 115, 33, 0.28);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+    }
+
+    .submit-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 12px rgba(249, 115, 33, 0.22);
+    }
+
+    .submit-button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+      box-shadow: none;
+    }
+
+    /* STATUS */
+    #status {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 14px;
+      min-height: 21px;
+      line-height: 1.5;
+    }
+
+    /* SUCCESS SCREEN */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: rgba(105, 216, 79, 0.16);
+      color: #2b9318;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 20px;
+    }
+
+    .success-screen h2 {
+      color: var(--text);
+      font-size: 24px;
+      margin: 0 0 10px;
+    }
+
+    .success-screen p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 6px 0;
+    }
+
+    /* LANDSCAPE TABLET */
+    @media (orientation: landscape) and (min-width: 700px) {
+      body {
+        padding: 25px;
+      }
+
+      .app {
+        max-width: 1020px;
+        padding: 42px 44px 36px;
+      }
+
+      #attendanceForm {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 26px;
+        row-gap: 20px;
+        align-items: stretch;
+      }
+
+      .section {
+        margin-bottom: 0;
+      }
+
+      .signature-section,
+      .notice,
+      .submit-button {
+        grid-column: 1 / -1;
+      }
+
+      .notice {
+        margin: 4px 0;
+      }
+
+      canvas {
+        height: 195px;
+      }
+    }
+
+    /* PORTRAIT TABLET */
+    @media (orientation: portrait) and (min-width: 600px) {
+      .app {
+        max-width: 620px;
+        padding: 44px 38px 36px;
+      }
+
+      canvas {
+        height: 215px;
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .app {
+        padding: 36px 18px 24px;
+        border-radius: 20px;
+      }
+
+      .welcome-banner {
+        font-size: 32px;
+        -webkit-text-stroke: 5px var(--banner-yellow);
+      }
+
+      .kids-word {
+        font-size: 36px;
+      }
+
+      .kingdom-title {
+        font-size: 25px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- DECORATIVE BANNER ACCENTS -->
+  <div class="banner-blobs-top"></div>
+  <div class="corner-blob blob-tl"></div>
+  <div class="corner-blob blob-tr"></div>
+
+  <!-- HEADER (MATCHING BANNER) -->
+  <div class="header">
+
+    <!-- Hand-drawn double black swoosh above WELCOME -->
+    <svg class="welcome-arc" viewBox="0 0 180 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 24 C 65 4, 125 4, 170 16" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <path d="M35 26 C 80 10, 130 10, 165 21" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+
+    <h1 class="welcome-banner" aria-label="WELCOME">
+      <span class="w">W</span><span class="e1">E</span><span class="l">L</span><span class="c">C</span><span class="o">O</span><span class="m">M</span><span class="e2">E</span>
+    </h1>
+
+    <div class="to-text">TO</div>
+
+    <!-- Hand-drawn orange circle around multi-colored "Kids" -->
+    <div class="kids-oval-wrap">
+      <svg class="kids-oval-svg" viewBox="0 0 200 85" fill="none" preserveAspectRatio="none">
+        <path d="M18 42 C16 14, 182 10, 186 42 C190 72, 22 76, 14 44 C10 22, 175 16, 182 45" stroke="#f97321" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <div class="kids-word">
+        <span class="k">K</span><span class="i">i</span><span class="d">d</span><span class="s">s</span>
+      </div>
+    </div>
+
+    <div class="kingdom-title">KINGDOM</div>
+
+    <!-- Triple black underline strokes below KINGDOM -->
+    <svg class="kingdom-strikes" viewBox="0 0 240 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 6 Q 120 3, 225 10" stroke="#111" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M45 13 Q 140 11, 232 17" stroke="#111" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M75 20 Q 155 18, 228 23" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+
+    <div class="church-badge">
+      PRETORIA INTERNATIONAL CHRISTIAN CHURCH
+    </div>
+
+    <div class="instruction">
+      Please complete the form below to sign your child in.
+    </div>
+
+  </div>
+
+  <!-- ATTENDANCE FORM (CLEAN & PROFESSIONAL FOR PARENTS) -->
+  <form id="attendanceForm">
+
+    <div class="section section-parent">
+      <div class="section-title">Parent / Guardian Details</div>
+
+      <div class="field">
+        <label for="parentName">Parent's Full Name</label>
+        <input
+          type="text"
+          id="parentName"
+          maxlength="100"
+          placeholder="Enter your full name"
+          autocomplete="name"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="parentPhone">Contact Number</label>
+        <input
+          type="tel"
+          id="parentPhone"
+          maxlength="25"
+          placeholder="e.g. 082 123 4567"
+          autocomplete="tel"
+          required
+        >
+      </div>
+    </div>
+
+    <div class="section section-child">
+      <div class="section-title">Child's Details</div>
+
+      <div class="field">
+        <label for="childName">Child's Full Name</label>
+        <input
+          type="text"
+          id="childName"
+          maxlength="100"
+          placeholder="Enter child's full name"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label for="childAge">Child's Age</label>
+        <input
+          type="number"
+          id="childAge"
+          min="0"
+          max="18"
+          placeholder="Enter child's age"
+          required
+        >
+      </div>
+    </div>
+
+    <!-- SIGNATURE -->
+    <div class="section signature-section">
+      <div class="section-title">Parent / Guardian Signature</div>
+
+      <div class="signature-box">
+        <canvas id="signaturePad"></canvas>
+
+        <div class="signature-footer">
+          <span class="signature-hint">Sign using your finger or stylus.</span>
+          <button
+            type="button"
+            class="clear-button"
+            onclick="clearSignature()">
+            CLEAR SIGNATURE
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTICE -->
+    <div class="notice">
+      By signing, I confirm that the information provided is correct and that I am signing my child into Kids' Kingdom today. My signature will be recorded with this attendance entry.
+    </div>
+
+    <!-- SUBMIT -->
+    <button
+      type="submit"
+      class="submit-button"
+      id="submitButton">
+      SIGN IN CHILD
+    </button>
+
+  </form>
+
+  <!-- STATUS -->
+  <div id="status"></div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h2>Successfully Signed In!</h2>
+    <p>Thank you for signing your child into Kids' Kingdom.</p>
+    <p>Have a blessed Sunday! ❤️</p>
+  </div>
+
+</div>
+
+<script>
+  // SIGNATURE PAD
+  const canvas = document.getElementById("signaturePad");
+  const ctx = canvas.getContext("2d");
+
+  let drawing = false;
+  let hasSignature = false;
+  let submitting = false;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0) return;
+    const ratio = window.devicePixelRatio || 1;
+
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#1e292b";
+    hasSignature = false;
+  }
+
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  function getPosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    };
+  }
+
+  canvas.addEventListener("pointerdown", function(event) {
+    event.preventDefault();
+    drawing = true;
+    hasSignature = true;
+    canvas.setPointerCapture(event.pointerId);
+
+    const pos = getPosition(event);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+  });
+
+  canvas.addEventListener("pointermove", function(event) {
+    if (!drawing) return;
+    event.preventDefault();
+
+    const pos = getPosition(event);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  });
+
+  function stopDrawing() {
+    drawing = false;
+  }
+
+  canvas.addEventListener("pointerup", stopDrawing);
+  canvas.addEventListener("pointercancel", stopDrawing);
+
+  function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasSignature = false;
+  }
+
+  // FORM STATUS
+  function showStatus(message, type) {
+    const status = document.getElementById("status");
+    status.textContent = message;
+    status.style.color =
+      type === "error" ? "#d92638" :
+      type === "success" ? "#2b9318" :
+      "#68767a";
+  }
+
+  // RESET FORM
+  let resetTimer;
+  let inactivityTimer;
+
+  function resetApplication() {
+    const form = document.getElementById("attendanceForm");
+    form.reset();
+
+    form.style.display = "";
+    document.getElementById("successScreen").style.display = "none";
+
+    resizeCanvas();
+    clearSignature();
+    showStatus("", "");
+
+    submitting = false;
+    const button = document.getElementById("submitButton");
+    button.disabled = false;
+    button.textContent = "SIGN IN CHILD";
+
+    startInactivityTimer();
+  }
+
+  // AUTOMATIC INACTIVITY RESET
+  function startInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(function() {
+      if (!submitting) {
+        resetApplication();
+      }
+    }, 60000);
+  }
+
+  document.addEventListener("input", startInactivityTimer);
+  canvas.addEventListener("pointerdown", startInactivityTimer);
+
+  // SUBMIT ATTENDANCE
+  document.getElementById("attendanceForm")
+    .addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (submitting) return;
+
+      if (!hasSignature) {
+        showStatus("Please provide your signature.", "error");
+        return;
+      }
+
+      const payload = {
+        parentName: document.getElementById("parentName").value.trim(),
+        parentPhone: document.getElementById("parentPhone").value.trim(),
+        childName: document.getElementById("childName").value.trim(),
+        childAge: document.getElementById("childAge").value,
+        signature: canvas.toDataURL("image/png")
+      };
+
+      submitting = true;
+
+      const button = document.getElementById("submitButton");
+      button.disabled = true;
+      button.textContent = "SUBMITTING...";
+
+      showStatus("Saving attendance...", "");
+      clearTimeout(inactivityTimer);
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (!response || !response.success) {
+            showStatus("Unable to confirm submission.", "error");
+            submitting = false;
+            button.disabled = false;
+            button.textContent = "SIGN IN CHILD";
+            startInactivityTimer();
+            return;
+          }
+
+          document.getElementById("attendanceForm").style.display = "none";
+          document.getElementById("successScreen").style.display = "block";
+          showStatus("", "");
+
+          resetTimer = setTimeout(resetApplication, 5000);
+        })
+        .withFailureHandler(function(error) {
+          showStatus(error.message, "error");
+          submitting = false;
+          button.disabled = false;
+          button.textContent = "SIGN IN CHILD";
+          startInactivityTimer();
+        })
+        .submitAttendance(payload);
+    });
+
+  // INITIALISE
+  startInactivityTimer();
+</script>
+
+</body>
+</html>
